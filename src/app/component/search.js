@@ -20,14 +20,13 @@ function SearchTable({ setStoreName }) {
 
     return (
         <>
-            <Form.Label htmlFor="inputPassword5">Busca</Form.Label>
             <Form.Control
                 type="text"
                 id="searchCnab"
-                aria-describedby="passwordHelpBlock"
+                aria-describedby="HelpBlock"
                 onChange={(e) => handleSearchTerm(e.target.value)}
             />
-            <Form.Text id="passwordHelpBlock" muted>
+            <Form.Text id="HelpBlock" muted>
                 Informe o nome da loja
             </Form.Text>
         </>

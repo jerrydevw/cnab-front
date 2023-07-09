@@ -1,8 +1,6 @@
 import Table from 'react-bootstrap/Table';
 
 function TableCnab(cnabsPaginated) {
-    console.log(cnabsPaginated.cnabsPaginated?.content);
-    
     const tableHeaders = [
         "Data", "Valor", "Cpf", "Numero do cartao", "Hora", "Dono da loja", "Nome da loja", "Tipo", "Natureza"
     ]
@@ -24,7 +22,7 @@ function TableCnab(cnabsPaginated) {
 
                 {cnabsPaginated.cnabsPaginated?.content.map((cnab, index) => (
                     <tr key={index}>
-                        <td>{index}</td>
+                        <td>{index+1}</td>
                         <td>{cnab.date}</td>
                         <td>{cnab.value}</td>
                         <td>{cnab.cpf}</td>

@@ -11,12 +11,13 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
 
 import TableCnab from './component/table';
 import PaginationCustom from './component/pagination';
 import SearchTable from './component/search';
 import SelectQuantityTable from './component/select';
-import url from 'url';
+import OffCanvasHome from './component/offcanvas';
 
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -30,6 +31,8 @@ export default function Home() {
   const [size, setSize] = useState(10);
   const [storeName, setStoreName] = useState(null);
   const [totalPages, setTotalPages] = useState(0);
+
+  const [balance, setBalance] = useState(null);
 
 
   const handlePageChange = (newPage) => {
@@ -78,9 +81,23 @@ export default function Home() {
     params.append('size', size);
     params.append('storeName', storeName);
 
-    // const params = new url.URLSearchParams({ page: page, size: size, storeName: storeName });
-
     const result = await axios.get('http://localhost:8080/cnab', {
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+      },
+      params: params
+    });
+
+    return result.data;
+
+  }
+
+  const getCnabsBalance = async function getCnabs(storeName) {
+    const params = new URLSearchParams();
+    params.append('storeName', storeName);
+
+    const result = await axios.get('http://localhost:8080/cnab/balance', {
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*"
@@ -103,44 +120,103 @@ export default function Home() {
     
   }), [cnabs];
 
-
   useEffect(() => {
+    console.log("size: " + size + " page: " + page + " storeName: " + storeName)
     if (cnabs != null) {
       getCnabs(page, size, storeName)
       .then((result) => {
         setCnabs(result);
         setTotalPages(result.totalPages);
       })
+
+      if (storeName != null && storeName != "") {
+        getCnabsBalance(storeName)
+        .then((result) => {
+          console.log(result)
+          setBalance(result);
+        })
+      } else {
+        setBalance(null);
+      }
     }
   }, [page, size, storeName]);
+
+  const contentCanvas = (handleFileChange, handleSubmit) => {
+    return <>
+    <Row>
+        <Col xs={3}>
+          <>
+            <Form.Group controlId="formFile" className="mb-3">
+              <Form.Control type="file" onChange={handleFileChange} />
+            </Form.Group>
+          </>
+        </Col>
+
+        <Col xs={2}>
+          <Button variant="primary" type="submit" onClick={handleSubmit}>Upload</Button>
+        </Col>
+
+        {balance != null ? 
+          <Col>
+            <Form>
+              <Form.Group as={Row} className="mb-4" controlId="formPlaintextEmail">
+                <Form.Label column sm="2">
+                  Empresa
+                </Form.Label>
+                <Col sm="10">
+                  <Form.Control plaintext readOnly defaultValue={storeName} />
+                </Col>
+              </Form.Group>
+
+              <Form.Group as={Row} className="mb-4" controlId="formPlaintextEmail">
+                <Form.Label column sm="2">
+                  Entradas
+                </Form.Label>
+                <Col sm="10">
+                  <Form.Control plaintext readOnly defaultValue={balance.totalEntrance} />
+                </Col>
+              </Form.Group>
+
+              <Form.Group as={Row} className="mb-3" controlId="formPlaintextEmail">
+                <Form.Label column sm="2">
+                  Saidas
+                </Form.Label>
+                <Col sm="10">
+                  <Form.Control plaintext readOnly defaultValue={balance.totalExit} />
+                </Col>
+              </Form.Group>
+
+              <Form.Group as={Row} className="mb-3" controlId="formPlaintextEmail">
+                <Form.Label column sm="2">
+                  Saldo
+                </Form.Label>
+                <Col sm="10">
+                  <Form.Control plaintext readOnly defaultValue={balance.finalValue} />
+                </Col>
+              </Form.Group>
+            </Form>
+          </Col> : null}
+
+
+    </Row>
+    </>
+  }
 
   return (
 
     <Container>
       <Row>
         <Col>
-          lembrar de jogar para o meio do container
+          <OffCanvasHome children={contentCanvas(handleFileChange, handleSubmit)}/>
         </Col>
-      </Row>
-    
-      <Row>
-        <Col>
-          <>
-            <Form.Group controlId="formFile" className="mb-3">
-              <Form.Control type="file" onChange={handleFileChange}/>
-            </Form.Group>
-          </>   
-        </Col>
-
-        <Col>
-          <Button variant="primary" type="submit" onClick={handleSubmit}>Upload</Button>
-        </Col>
-        
       </Row>
 
       <Row>
         <Col>
           <SearchTable setStoreName={setStoreName}></SearchTable>
+        </Col>
+        <Col>
+          <SelectQuantityTable setSize={setSize}></SelectQuantityTable>
         </Col>
       </Row>
 

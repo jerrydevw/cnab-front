@@ -1,12 +1,15 @@
 import Form from 'react-bootstrap/Form';
 
-function SelectQuantityTable() {
+function handleSelect(event, setSize) {
+    setSize(event.target.value);
+}
+
+function SelectQuantityTable({setSize}) {    
     return (
-        <Form.Select aria-label="Default select example">
-            <option>Open this select menu</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
+        <Form.Select onChange={(event) => handleSelect(event, setSize)} aria-label="Default select example">
+            <option value="10" >10</option>
+            <option value="30" >30</option>
+            <option value="50" >50</option>
         </Form.Select>
     );
 }
