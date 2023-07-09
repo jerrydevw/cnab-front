@@ -75,8 +75,8 @@ function PaginationCustom({ setPage, currentPage, totalPages }) {
 
             {renderPageNumbers()}
 
-            <Pagination.Next onClick={goToNextPage} disabled={currentPage === totalPages - 1} />
-            <Pagination.Last onClick={goToLastPage} disabled={currentPage === totalPages - 1} />
+            <Pagination.Next onClick={goToNextPage} disabled={currentPage === totalPages} />
+            <Pagination.Last onClick={goToLastPage} disabled={currentPage === totalPages} />
         </Pagination>
     );
 }

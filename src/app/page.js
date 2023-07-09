@@ -14,6 +14,9 @@ import Form from 'react-bootstrap/Form';
 
 import TableCnab from './component/table';
 import PaginationCustom from './component/pagination';
+import SearchTable from './component/search';
+import SelectQuantityTable from './component/select';
+import url from 'url';
 
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -31,6 +34,10 @@ export default function Home() {
 
   const handlePageChange = (newPage) => {
     setPage(newPage);
+  }
+
+  const hadleSearchTerm = (searchTerm) => {
+    setStoreName(searchTerm);
   }
 
   const handleFileChange = (e) => {
@@ -66,11 +73,12 @@ export default function Home() {
   };
 
   const getCnabs = async function getCnabs(page, size, storeName) {
-    const params = {
-      page: page,
-      size: size,
-      storeName: storeName
-    }
+    const params = new URLSearchParams();
+    params.append('page', page);
+    params.append('size', size);
+    params.append('storeName', storeName);
+
+    // const params = new url.URLSearchParams({ page: page, size: size, storeName: storeName });
 
     const result = await axios.get('http://localhost:8080/cnab', {
       headers: {
@@ -111,6 +119,12 @@ export default function Home() {
     <Container>
       <Row>
         <Col>
+          lembrar de jogar para o meio do container
+        </Col>
+      </Row>
+    
+      <Row>
+        <Col>
           <>
             <Form.Group controlId="formFile" className="mb-3">
               <Form.Control type="file" onChange={handleFileChange}/>
@@ -122,6 +136,12 @@ export default function Home() {
           <Button variant="primary" type="submit" onClick={handleSubmit}>Upload</Button>
         </Col>
         
+      </Row>
+
+      <Row>
+        <Col>
+          <SearchTable setStoreName={setStoreName}></SearchTable>
+        </Col>
       </Row>
 
       <Row>
