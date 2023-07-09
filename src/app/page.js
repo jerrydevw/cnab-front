@@ -13,33 +13,25 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 
 import TableCnab from './component/table';
+import PaginationCustom from './component/pagination';
 
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-
-async function getCnabs(page, size, storeName) {
-  const params = {
-    page: page,
-    size: size,
-    storeName: storeName
-  }
-
-  const result = await axios.get('http://localhost:8080/cnab', {
-    headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "*"
-    },
-    params: params
-  });
-
-  return result.data;
-
-}
 
 export default function Home() {
   const [file, setFile] = useState();
 
   const [cnabs, setCnabs] = useState(null);
+
+  const [page, setPage] = useState(0);
+  const [size, setSize] = useState(10);
+  const [storeName, setStoreName] = useState(null);
+  const [totalPages, setTotalPages] = useState(0);
+
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  }
 
   const handleFileChange = (e) => {
     if (e.target.files) {
@@ -73,15 +65,46 @@ export default function Home() {
 
   };
 
+  const getCnabs = async function getCnabs(page, size, storeName) {
+    const params = {
+      page: page,
+      size: size,
+      storeName: storeName
+    }
+
+    const result = await axios.get('http://localhost:8080/cnab', {
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+      },
+      params: params
+    });
+
+    return result.data;
+
+  }
+
   useEffect(() => {
     if (cnabs == null) {
-      getCnabs(0, 2, "BAR DO JOÃO")
+      getCnabs(page, size, storeName)
       .then((result) => {
         setCnabs(result);
+        setTotalPages(result.totalPages);
       })
     }
     
   }), [cnabs];
+
+
+  useEffect(() => {
+    if (cnabs != null) {
+      getCnabs(page, size, storeName)
+      .then((result) => {
+        setCnabs(result);
+        setTotalPages(result.totalPages);
+      })
+    }
+  }, [page, size, storeName]);
 
   return (
 
@@ -103,6 +126,12 @@ export default function Home() {
 
       <Row>
         <TableCnab cnabsPaginated={cnabs}></TableCnab>
+      </Row>
+
+      <Row>
+        <div className="d-flex justify-content-center">
+          <PaginationCustom setPage={handlePageChange} currentPage={page} totalPages={totalPages}></PaginationCustom>
+        </div>
       </Row>
     </Container>
 
