@@ -101,6 +101,9 @@ export default function Home() {
 
   useEffect(() => {
     if (cnabs != null) {
+      if(storeName != null && storeName != "") {
+        setPage(0);
+      }
       getCnabs(page, size, storeName)
       .then((cnabsResult) => {
         setCnabs(cnabsResult);
