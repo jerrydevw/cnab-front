@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const UploadFile = async (formData) => {
-    axios.post('http://localhost:8080/cnab', formData, {
+    const promisseResult = await axios.post('http://localhost:8080/cnab', formData, {
         headers: {
             "Content-Type": "multipart/form-data",
             "Access-Control-Allow-Origin": "*"
@@ -13,6 +13,8 @@ const UploadFile = async (formData) => {
         .catch(function (error) {
             console.error(error);
         });
+
+    return promisseResult;
 
 }
 

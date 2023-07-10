@@ -57,7 +57,19 @@ export default function Home() {
     const formData = new FormData();
     formData.append("file", file);
 
-    UploadFile(formData);
+    UploadFile(formData)
+    .then(() => {
+      setTimeout(() => {
+        console.log("get data in timeout");
+        if (cnabs == null || cnabs.empty) {
+          getCnabs(page, size, storeName)
+            .then((cnabsResult) => {
+              setCnabs(cnabsResult);
+            })
+          }
+      }, 500);
+
+    })
 
   };
 
@@ -98,7 +110,6 @@ export default function Home() {
       if (storeName != null && storeName != "") {
         getCnabsBalance(storeName)
         .then((balanceResult) => {
-          console.log(balanceResult);
           setBalance(balanceResult);
         })
 
@@ -107,69 +118,6 @@ export default function Home() {
       }
     }
   }, [page, size, storeName]);
-
-  // const contentCanvas = (handleFileChange, handleSubmit) => {
-  //   return <>
-  //   <Row>
-  //       <Col xs={3}>
-  //         <>
-  //           <Form.Group controlId="formFile" className="mb-3">
-  //             <Form.Control type="file" onChange={handleFileChange} />
-  //           </Form.Group>
-  //         </>
-  //       </Col>
-
-  //       <Col xs={2}>
-  //         <Button variant="primary" type="submit" onClick={handleSubmit}>Upload</Button>
-  //       </Col>
-
-  //       {balance != null ? 
-  //         <Col>
-  //           <Form>
-  //             <Form.Group as={Row} className="mb-4" controlId="formPlaintextEmail">
-  //               <Form.Label column sm="2">
-  //                 Empresa
-  //               </Form.Label>
-  //               <Col sm="10">
-  //                 <Form.Control plaintext readOnly defaultValue={storeName} />
-  //               </Col>
-  //             </Form.Group>
-
-  //             <Form.Group as={Row} className="mb-4" controlId="formPlaintextEmail">
-  //               <Form.Label column sm="2">
-  //                 Entradas
-  //               </Form.Label>
-  //               <Col sm="10">
-  //                 <Form.Control plaintext readOnly defaultValue={FormateCurrency(balance.totalEntrance)} />
-  //               </Col>
-  //             </Form.Group>
-
-  //             <Form.Group as={Row} className="mb-3" controlId="formPlaintextEmail">
-  //               <Form.Label column sm="2">
-  //                 Saidas
-  //               </Form.Label>
-  //               <Col sm="10">
-  //                 <Form.Control plaintext readOnly defaultValue={FormateCurrency(balance.totalExit)} />
-  //               </Col>
-  //             </Form.Group>
-
-  //             <Form.Group as={Row} className="mb-3" controlId="formPlaintextEmail">
-  //               <Form.Label column sm="2">
-  //                 Saldo
-  //               </Form.Label>
-  //               <Col sm="10">
-  //                 <Form.Control plaintext readOnly defaultValue={FormateCurrency(balance.finalValue)} />
-  //               </Col>
-  //             </Form.Group>
-  //           </Form>
-  //         </Col> : <Col>
-  //                     <h4>Pesquise uma empresa por nome para ver o saldo</h4>
-  //                  </Col>}
-
-
-  //   </Row>
-  //   </>
-  // }
 
   return (
 
