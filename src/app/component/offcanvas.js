@@ -11,14 +11,17 @@ function OffCanvasHome({ children }) {
 
     return (
         <>
-            <Button variant="primary" onClick={handleShow} className="me-2">
-                Upload e Balanço
-            </Button>
-            <Offcanvas show={show} onHide={handleClose} placement='top'>
-                <Offcanvas.Body>
-                    {children}
-                </Offcanvas.Body>
-            </Offcanvas>
+            <div style={{height: '50px'}}>
+                    <Button variant="primary" onClick={handleShow} className="me-2">
+                        Upload e Balanço
+                    </Button>
+                    <Offcanvas show={show} onHide={handleClose} placement='top'>
+                        <Offcanvas.Body>
+                            {children}
+                        </Offcanvas.Body>
+                    </Offcanvas>
+            </div>
+
         </>
     );
 }

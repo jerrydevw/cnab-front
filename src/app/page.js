@@ -19,6 +19,8 @@ import SearchTable from './component/search';
 import SelectQuantityTable from './component/select';
 import OffCanvasHome from './component/offcanvas';
 
+import FormateCurrency from './util/formatecurrency';
+
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
@@ -29,7 +31,7 @@ export default function Home() {
 
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
-  const [storeName, setStoreName] = useState(null);
+  const [storeName, setStoreName] = useState('');
   const [totalPages, setTotalPages] = useState(0);
 
   const [balance, setBalance] = useState(null);
@@ -37,10 +39,6 @@ export default function Home() {
 
   const handlePageChange = (newPage) => {
     setPage(newPage);
-  }
-
-  const hadleSearchTerm = (searchTerm) => {
-    setStoreName(searchTerm);
   }
 
   const handleFileChange = (e) => {
@@ -66,8 +64,8 @@ export default function Home() {
         "Access-Control-Allow-Origin": "*"
       },
     })
-    .then(function (response) {
-      console.log(response);
+    .then(function () {
+      setFile();
     })
     .catch(function (error) {
       console.error(error);
@@ -110,6 +108,10 @@ export default function Home() {
   }
 
   useEffect(() => {
+
+  }, [file]);
+
+  useEffect(() => {
     if (cnabs == null) {
       getCnabs(page, size, storeName)
       .then((result) => {
@@ -121,7 +123,6 @@ export default function Home() {
   }), [cnabs];
 
   useEffect(() => {
-    console.log("size: " + size + " page: " + page + " storeName: " + storeName)
     if (cnabs != null) {
       getCnabs(page, size, storeName)
       .then((result) => {
@@ -132,7 +133,6 @@ export default function Home() {
       if (storeName != null && storeName != "") {
         getCnabsBalance(storeName)
         .then((result) => {
-          console.log(result)
           setBalance(result);
         })
       } else {
@@ -173,7 +173,7 @@ export default function Home() {
                   Entradas
                 </Form.Label>
                 <Col sm="10">
-                  <Form.Control plaintext readOnly defaultValue={balance.totalEntrance} />
+                  <Form.Control plaintext readOnly defaultValue={FormateCurrency(balance.totalEntrance)} />
                 </Col>
               </Form.Group>
 
@@ -182,7 +182,7 @@ export default function Home() {
                   Saidas
                 </Form.Label>
                 <Col sm="10">
-                  <Form.Control plaintext readOnly defaultValue={balance.totalExit} />
+                  <Form.Control plaintext readOnly defaultValue={FormateCurrency(balance.totalExit)} />
                 </Col>
               </Form.Group>
 
@@ -191,11 +191,13 @@ export default function Home() {
                   Saldo
                 </Form.Label>
                 <Col sm="10">
-                  <Form.Control plaintext readOnly defaultValue={balance.finalValue} />
+                  <Form.Control plaintext readOnly defaultValue={FormateCurrency(balance.finalValue)} />
                 </Col>
               </Form.Group>
             </Form>
-          </Col> : null}
+          </Col> : <Col>
+                      <h4>Pesquise uma empresa por nome para ver o saldo</h4>
+                   </Col>}
 
 
     </Row>
@@ -206,6 +208,11 @@ export default function Home() {
 
     <Container>
       <Row>
+        <Col>
+          <h1 className="text-center">Cnab</h1>
+        </Col>
+      </Row>
+      <Row className="row mx-md-n5">
         <Col>
           <OffCanvasHome children={contentCanvas(handleFileChange, handleSubmit)}/>
         </Col>
